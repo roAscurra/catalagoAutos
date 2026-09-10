@@ -41,7 +41,11 @@ class AuthController extends Controller
 
         $request->session()->regenerate();
 
-        return redirect()->intended(route('panel.dashboard'));
+        $destination = Auth::user()?->rol === 'admin'
+            ? route('admin.dashboard')
+            : route('panel.dashboard');
+
+        return redirect($destination);
     }
 
 
@@ -65,9 +69,10 @@ class AuthController extends Controller
 
                 'nombre_negocio' => 'required|string|max:255',
 
-                'slug' => 'required|string|max:100|alpha_dash|unique:perfil,slug',
+                'slug' => 'nullable|required_if:rol,agencia|string|max:100|alpha_dash|unique:perfil,slug',
 
                 'plan_id' => 'nullable|exists:plans,id',
+                'rol' => 'required|in:agencia,individual',
             ],
             [
                 'name.required' => 'El nombre es obligatorio.',
@@ -95,6 +100,7 @@ class AuthController extends Controller
                 'slug.unique' => 'Esta URL ya está siendo utilizada.',
 
                 'plan_id.exists' => 'El plan seleccionado no es válido.',
+                'rol.in' => 'El rol seleccionado no es válido.',
             ]
         );
 
@@ -102,11 +108,12 @@ class AuthController extends Controller
             'name' => $data['name'],
             'email' => $data['email'],
             'password' => Hash::make($data['password']),
+            'rol' => $data['rol'],
         ]);
 
         $user->perfil()->create([
             'plan_id' => $data['plan_id'] ?? null,
-            'slug' => Str::lower($data['slug']),
+            'slug' => isset($data['slug']) ? Str::lower($data['slug']) : null,
             'nombre_negocio' => $data['nombre_negocio'],
             'color_principal' => '#e85d04',
         ]);

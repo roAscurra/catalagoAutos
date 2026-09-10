@@ -18,6 +18,15 @@
 
         @csrf
 
+        <label>
+            Tipo de cuenta
+            <select name="rol" class="{{ $errors->has('rol') ? 'input-error' : '' }}" required>
+                <option value="agencia" @selected(old('rol', 'individual') === 'agencia')>Agencia / concesionaria</option>
+                <option value="individual" @selected(old('rol') === 'individual')>Vendedor individual</option>
+            </select>
+            @error('rol')<small class="form-error">{{ $message }}</small>@enderror
+        </label>
+
 
         {{-- NOMBRE --}}
         <label>
@@ -86,8 +95,9 @@
                 value="{{ old('slug') }}"
                 placeholder="mi-concesionaria"
                 class="{{ $errors->has('slug') ? 'input-error' : '' }}"
-                required
             >
+
+            <small>Solo es pública para cuentas de agencia.</small>
 
             @error('slug')
                 <small class="form-error">
