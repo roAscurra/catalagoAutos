@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
 
 class Vehiculo extends Model
 {
@@ -12,11 +13,23 @@ class Vehiculo extends Model
     protected $table = 'vehiculos';
 
     protected $fillable = [
-        'perfil_id', 'tipo', 'marca_id', 'modelo_id', 'anio', 'kilometros',
+        'perfil_id', 'public_id', 'tipo', 'marca_id', 'modelo_id', 'anio', 'kilometros',
         'precio', 'moneda', 'ubicacion', 'imagen', 'descripcion', 'publicado',
     ];
 
     protected $casts = ['publicado' => 'boolean', 'precio' => 'decimal:2'];
+
+    protected static function booted(): void
+    {
+        static::creating(function (Vehiculo $vehiculo): void {
+            $vehiculo->public_id ??= (string) Str::uuid();
+        });
+    }
+
+    public function getRouteKeyName(): string
+    {
+        return 'public_id';
+    }
 
     public function perfil()
     {
@@ -31,5 +44,10 @@ class Vehiculo extends Model
     public function modelo()
     {
         return $this->belongsTo(Modelo::class);
+    }
+
+    public function imagenes()
+    {
+        return $this->hasMany(VehiculoImagen::class)->orderBy('orden');
     }
 }

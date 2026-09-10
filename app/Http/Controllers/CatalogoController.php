@@ -12,7 +12,7 @@ class CatalogoController extends Controller
 {
     public function index(Request $request)
     {
-        $vehiculos = Vehiculo::with(['perfil.plan', 'marca', 'modelo'])
+        $vehiculos = Vehiculo::with(['perfil.user', 'perfil.plan', 'marca', 'modelo', 'imagenes'])
             ->where('publicado', true)
             ->when($request->filled('tipo'), fn ($query) => $query->where('tipo', $request->string('tipo')))
             ->when($request->filled('marca'), fn ($query) => $query->where('marca_id', $request->integer('marca')))
@@ -33,9 +33,18 @@ class CatalogoController extends Controller
 
     public function vendedor(string $slug)
     {
-        $perfil = Perfil::with(['plan', 'vehiculos' => fn ($query) => $query->where('publicado', true)->latest()])
+        $perfil = Perfil::with(['user', 'plan', 'vehiculos.marca', 'vehiculos.modelo', 'vehiculos.imagenes'])
             ->where('slug', $slug)->firstOrFail();
 
+        abort_unless($perfil->user?->rol === 'agencia', 404);
+
         return view('vendedor', compact('perfil'));
+    }
+
+    public function vehiculo(Vehiculo $vehiculo)
+    {
+        abort_unless($vehiculo->publicado, 404);
+        $vehiculo->load(['perfil.user', 'marca', 'modelo', 'imagenes']);
+        return view('catalogo.show', compact('vehiculo'));
     }
 }

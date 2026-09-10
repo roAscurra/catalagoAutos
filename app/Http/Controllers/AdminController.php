@@ -40,10 +40,17 @@ class AdminController extends Controller
     {
         $this->ensureResource($resource);
         $data = $this->validated($request, $resource);
-        if ($resource === 'vehiculos' && $request->hasFile('imagen')) {
-            $data['imagen'] = $request->file('imagen')->store('vehiculos', 'public');
+        $images = $resource === 'vehiculos' ? $request->file('imagenes', []) : [];
+        unset($data['imagenes']);
+        if ($resource === 'vehiculos') {
+            $data['imagen'] = null;
         }
-        $this->model($resource)::create($data);
+        $item = $this->model($resource)::create($data);
+        foreach ($images as $order => $image) {
+            $path = $image->store('vehiculos', 'public');
+            $item->imagenes()->create(['ruta' => $path, 'orden' => $order]);
+            if ($order === 0) $item->update(['imagen' => $path]);
+        }
 
         return redirect()->route('admin.index', $resource)->with('success', 'Registro creado correctamente.');
     }
@@ -65,11 +72,20 @@ class AdminController extends Controller
         $this->ensureResource($resource);
         $item = $this->model($resource)::findOrFail($id);
         $data = $this->validated($request, $resource, $item->id);
-        if ($resource === 'vehiculos' && $request->hasFile('imagen')) {
+        $images = $resource === 'vehiculos' ? $request->file('imagenes', []) : [];
+        unset($data['imagenes']);
+        if ($resource === 'vehiculos' && $images) {
+            foreach ($item->imagenes as $image) Storage::disk('public')->delete($image->ruta);
+            $item->imagenes()->delete();
             if ($item->imagen) Storage::disk('public')->delete($item->imagen);
-            $data['imagen'] = $request->file('imagen')->store('vehiculos', 'public');
+            $data['imagen'] = null;
         }
         $item->update($data);
+        foreach ($images as $order => $image) {
+            $path = $image->store('vehiculos', 'public');
+            $item->imagenes()->create(['ruta' => $path, 'orden' => $order]);
+            if ($order === 0) $item->update(['imagen' => $path]);
+        }
 
         return redirect()->route('admin.index', $resource)->with('success', 'Registro actualizado correctamente.');
     }
@@ -117,7 +133,7 @@ class AdminController extends Controller
             'perfiles' => ['user_id' => 'required|exists:users,id', 'plan_id' => 'nullable|exists:plans,id', 'slug' => ['required', 'string', 'max:100', $unique('perfil')], 'nombre_negocio' => 'required|string|max:255', 'telefono' => 'nullable|string|max:30', 'direccion' => 'nullable|string|max:255', 'descripcion' => 'nullable|string', 'color_principal' => 'required|string|size:7'],
             'marcas' => ['nombre' => 'required|string|max:100', 'slug' => ['required', 'string', 'max:100', $unique('marcas')]],
             'modelos' => ['marca_id' => 'required|exists:marcas,id', 'nombre' => 'required|string|max:100', 'slug' => 'required|string|max:100'],
-            'vehiculos' => ['perfil_id' => 'required|exists:perfil,id', 'tipo' => 'required|string|max:50', 'marca_id' => 'required|exists:marcas,id', 'modelo_id' => 'required|exists:modelos,id', 'anio' => 'nullable|integer|min:1900|max:2100', 'kilometros' => 'nullable|integer|min:0', 'precio' => 'nullable|numeric|min:0', 'moneda' => 'required|string|size:3', 'ubicacion' => 'nullable|string|max:150', 'imagen' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:5120', 'descripcion' => 'nullable|string', 'publicado' => 'boolean'],
+            'vehiculos' => ['perfil_id' => 'required|exists:perfil,id', 'tipo' => 'required|string|max:50', 'marca_id' => 'required|exists:marcas,id', 'modelo_id' => 'required|exists:modelos,id', 'anio' => 'nullable|integer|min:1900|max:2100', 'kilometros' => 'nullable|integer|min:0', 'precio' => 'nullable|numeric|min:0', 'moneda' => 'required|string|size:3', 'ubicacion' => 'nullable|string|max:150', 'imagenes' => 'nullable|array|max:12', 'imagenes.*' => 'image|mimes:jpg,jpeg,png,webp|max:5120', 'descripcion' => 'nullable|string', 'publicado' => 'boolean'],
         };
 
         return $request->validate($rules);
