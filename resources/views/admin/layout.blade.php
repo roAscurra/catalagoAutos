@@ -19,9 +19,19 @@
 
         <nav>
             <a href="{{ route('catalogo') }}">Ver catálogo</a>
-            <a class="nav-action" href="{{ route('admin.dashboard') }}">
-                Administración
-            </a>
+            @auth
+                @if(auth()->user()->tieneRol('admin'))
+                    <a class="nav-action" href="{{ route('admin.dashboard') }}">Administración</a>
+                @else
+                    <a class="nav-action" href="{{ route('panel.dashboard') }}">Mi panel</a>
+                @endif
+                <form method="POST" action="{{ route('logout') }}" class="header-logout">
+                    @csrf
+                    <button type="submit">Cerrar sesión</button>
+                </form>
+            @else
+                <a class="nav-action" href="{{ route('login') }}">Ingresar</a>
+            @endauth
         </nav>
     </header>
 
@@ -29,33 +39,22 @@
 
         <aside class="admin-nav">
 
-            <p class="eyebrow">Panel de control</p>
-
-            <h2>Gestionar</h2>
-
-            <a href="{{ route('admin.dashboard') }}">
-                Resumen
-            </a>
-
-            <a href="{{ route('admin.index', 'vehiculos') }}">
-                Vehículos
-            </a>
-
-            <a href="{{ route('admin.index', 'perfiles') }}">
-                Vendedores
-            </a>
-
-            <a href="{{ route('admin.index', 'planes') }}">
-                Planes
-            </a>
-
-            <a href="{{ route('admin.index', 'marcas') }}">
-                Marcas
-            </a>
-
-            <a href="{{ route('admin.index', 'modelos') }}">
-                Modelos
-            </a>
+            @auth
+                @if(auth()->user()->tieneRol('admin'))
+                    <p class="eyebrow">Panel de control</p>
+                    <h2>Gestionar</h2>
+                    <a href="{{ route('admin.dashboard') }}">Resumen</a>
+                    <a href="{{ route('admin.index', 'vehiculos') }}">Vehículos</a>
+                    <a href="{{ route('admin.index', 'perfiles') }}">Vendedores</a>
+                    <a href="{{ route('admin.index', 'planes') }}">Planes</a>
+                    <a href="{{ route('admin.index', 'marcas') }}">Marcas</a>
+                    <a href="{{ route('admin.index', 'modelos') }}">Modelos</a>
+                @else
+                    <p class="eyebrow">Espacio del vendedor</p>
+                    <h2>Mi cuenta</h2>
+                    <a href="{{ route('panel.dashboard') }}">Mis publicaciones</a>
+                @endif
+            @endauth
 
         </aside>
 
