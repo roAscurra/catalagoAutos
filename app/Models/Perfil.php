@@ -16,10 +16,24 @@ class Perfil extends Model
         'plan_id',
         'slug',
         'nombre_negocio',
+        'logo',
         'telefono',
         'direccion',
         'descripcion',
         'color_principal',
+        'plantilla',
+        'color_secundario',
+        'imagen_portada',
+        'titulo_portada',
+        'subtitulo_portada',
+        'whatsapp',
+        'instagram',
+        'facebook',
+        'secciones',
+    ];
+
+    protected $casts = [
+        'secciones' => 'array',
     ];
 
     public function user()
@@ -35,5 +49,10 @@ class Perfil extends Model
     public function vehiculos()
     {
         return $this->hasMany(Vehiculo::class);
+    }
+
+    public function esAgencia(): bool
+    {
+        return $this->user?->rol === 'agencia';
     }
 }
