@@ -1,25 +1,3 @@
-# ==========================================
-# 1. Etapa Node - Compilar Vite
-# ==========================================
-
-FROM node:20-alpine AS frontend
-
-WORKDIR /var/www
-
-COPY package*.json ./
-
-RUN npm install
-
-COPY resources ./resources
-COPY vite.config.js ./
-
-RUN npm run build
-
-
-# ==========================================
-# 2. Etapa PHP - Laravel
-# ==========================================
-
 FROM php:8.2-cli
 
 WORKDIR /var/www
@@ -27,6 +5,7 @@ WORKDIR /var/www
 RUN apt-get update && apt-get install -y \
     git \
     unzip \
+    curl \
     libzip-dev \
     libpng-dev \
     libonig-dev \
@@ -40,10 +19,14 @@ RUN apt-get update && apt-get install -y \
         zip \
     && rm -rf /var/lib/apt/lists/*
 
+# Node.js y npm
+RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
+    && apt-get update \
+    && apt-get install -y nodejs \
+    && rm -rf /var/lib/apt/lists/*
 
 # Composer
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
-
 
 # Dependencias PHP
 COPY composer.json composer.lock ./
@@ -51,30 +34,23 @@ COPY composer.json composer.lock ./
 RUN composer install \
     --no-dev \
     --optimize-autoloader \
-    --no-interaction
+    --no-interaction \
+    --no-scripts
 
+# Dependencias frontend
+COPY package.json package-lock.json ./
 
-# Código Laravel
+RUN npm ci
+
+# Código de Laravel
 COPY . .
 
+# Ahora que está todo el código, generamos el autoload
+RUN composer dump-autoload --optimize --no-interaction
 
-# Assets generados por Vite
-COPY --from=frontend /var/www/public/build ./public/build
+# Build de Vite
+RUN npm run build
 
-
-# Storage
-RUN php artisan storage:link || true
-
-
-# Cache Laravel
-RUN php artisan config:cache
-RUN php artisan route:cache
-RUN php artisan view:cache
-
-
-# Puerto de Render
 EXPOSE 10000
 
-
-# Servidor Laravel
-CMD ["php", "artisan", "serve", "--host=0.0.0.0", "--port=10000"]
+CMD ["sh", "-c", "php artisan package:discover --ansi && php artisan storage:link || true; php artisan serve --host=0.0.0.0 --port=10000"]
