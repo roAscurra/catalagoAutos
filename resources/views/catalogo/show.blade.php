@@ -30,8 +30,28 @@
             <p class="muted">{{ $vehiculo->marca?->nombre }}</p>
             <h1>{{ $vehiculo->modelo?->nombre }}</h1>
             <strong class="detail-price">{{ $vehiculo->moneda }} {{ number_format($vehiculo->precio ?? 0, 0, ',', '.') }}</strong>
-            <div class="detail-specs"><span><b>{{ $vehiculo->anio ?: '----' }}</b>Año</span><span><b>{{ number_format($vehiculo->kilometros ?? 0, 0, ',', '.') }}</b>Km</span><span><b>{{ $vehiculo->ubicacion ?: 'Consultar' }}</b>Ubicación</span></div>
-            <p class="detail-description">{{ $vehiculo->descripcion ?: 'Consultá todos los detalles de esta publicación.' }}</p>
+            <div class="detail-specs">
+                <span>
+                    <b>{{ $vehiculo->anio ?: '----' }}</b>
+                    Año
+                </span>
+
+                <span>
+                    <b>{{ number_format($vehiculo->kilometros ?? 0, 0, ',', '.') }}</b>
+                    Km
+                </span>
+
+                <span>
+                    <b>{{ $vehiculo->combustible ?: 'Consultar' }}</b>
+                    Combustible
+                </span>
+
+                <span>
+                    <b>{{ $vehiculo->ubicacion ?: 'Consultar' }}</b>
+                    Ubicación
+                </span>
+            </div>            
+        <p class="detail-description">{{ $vehiculo->descripcion ?: 'Consultá todos los detalles de esta publicación.' }}</p>
             @if($vehiculo->perfil?->user?->rol === 'agencia')
                 <p class="seller-label">Vende: <strong>{{ $vehiculo->perfil->nombre_negocio }}</strong></p>
                 <div class="detail-actions"><a class="button button-orange" href="{{ route('vendedor', $vehiculo->perfil->slug) }}">Ver catálogo del vendedor <span>↗</span></a>@if($vehiculo->perfil->whatsapp || $vehiculo->perfil->telefono)<a class="button button-whatsapp" href="https://wa.me/{{ preg_replace('/[^0-9]/', '', $vehiculo->perfil->whatsapp ?: $vehiculo->perfil->telefono) }}?text={{ urlencode('Hola ' . $vehiculo->perfil->nombre_negocio . ', consulto por el ' . $vehiculo->marca?->nombre . ' ' . $vehiculo->modelo?->nombre . ' publicado en Rodante.') }}" target="_blank" rel="noopener">Consultar por WhatsApp <span>↗</span></a>@endif</div>

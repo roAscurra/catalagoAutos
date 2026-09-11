@@ -14,7 +14,7 @@ class Vehiculo extends Model
 
     protected $fillable = [
         'perfil_id', 'public_id', 'tipo', 'marca_id', 'modelo_id', 'anio', 'kilometros',
-        'precio', 'moneda', 'ubicacion', 'imagen', 'descripcion', 'publicado',
+        'precio', 'moneda', 'combustible', 'ubicacion', 'imagen', 'descripcion', 'publicado',
     ];
 
     protected $casts = ['publicado' => 'boolean', 'precio' => 'decimal:2'];

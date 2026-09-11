@@ -685,7 +685,7 @@
 }
 
 .topbar nav a:hover {
-    color: var(--ink)
+    color: #ffff;
 }
 
 .topbar nav .nav-action {
@@ -872,7 +872,7 @@ footer {
 }
 
 .admin-nav h2 {
-    color: #fff
+    color: #000000;
 }
 
 .admin-nav a {
@@ -1587,6 +1587,7 @@ textarea:focus-visible {
 .nav-action:hover,
 .button-dark:hover {
     background: #263b36;
+    color: #ffff;
     transform: translateY(-1px);
 }
 
@@ -1685,6 +1686,7 @@ textarea:focus-visible {
 .vehicle-year {
     position: relative;
     z-index: 1;
+    color: #ffff;
 }
 
 .vehicle-type {

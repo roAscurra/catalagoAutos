@@ -25,7 +25,7 @@
         @php($image = $image ? asset('storage/'.$image) : 'https://images.unsplash.com/photo-1553440569-bcc63803a83d?auto=format&fit=crop&w=900&q=80')
         <article class="vehicle-card"><a href="{{ route('vehiculo.show', $vehiculo) }}"><div class="vehicle-image" style="background-image:linear-gradient(180deg,transparent 45%,rgba(20,24,24,.7)),url('{{ $image }}')"><span class="vehicle-type">{{ ucfirst($vehiculo->tipo) }}</span><span class="vehicle-year">{{ $vehiculo->anio }}</span></div></a><div class="vehicle-info"><p class="muted">{{ $vehiculo->marca?->nombre }}</p><h3>{{ $vehiculo->modelo?->nombre }}</h3><p class="vehicle-seller">Vende: {{ $vehiculo->perfil?->nombre_negocio }}</p><div class="vehicle-meta"><span>{{ number_format($vehiculo->kilometros ?? 0, 0, ',', '.') }} km</span><strong>{{ $vehiculo->moneda }} {{ number_format($vehiculo->precio ?? 0, 0, ',', '.') }}</strong></div><a href="{{ route('vehiculo.show', $vehiculo) }}">Ver publicación <span>↗</span></a>@if($vehiculo->perfil?->esAgencia())<a href="{{ route('vendedor', $vehiculo->perfil->slug) }}">Ver catálogo del vendedor <span>↗</span></a>@endif</div></article>
     @empty
-        <div class="empty-state"><strong>El catálogo está tomando forma.</strong><span>Pronto vas a encontrar nuevas publicaciones aquí.</span><a class="button button-orange" href="#planes">Quiero publicar <span>↗</span></a></div>
+        <div class="empty-state"><strong>No hay resultados disponibles.</strong><span>Pronto vas a encontrar nuevas publicaciones aquí.</span><a class="button button-orange" href="#planes">Quiero publicar <span>↗</span></a></div>
     @endforelse
     </div>{{ $vehiculos->links() }}
 </section>
