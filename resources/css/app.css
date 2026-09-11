@@ -846,6 +846,7 @@ footer {
 }
 
 .auth-card {
+    margin-top: 35px;
     border: 1px solid rgba(255, 255, 255, .5);
     box-shadow: 22px 22px 0 rgba(23, 33, 31, .2)
 }
@@ -1350,12 +1351,17 @@ footer {
 }
 
 .auth-card {
-    width: min(100%, 560px);
+    width: min(100%, 600px);
     background: #f8f6f1;
     padding: 45px;
     box-shadow: 18px 18px 0 rgba(23, 33, 31, .22)
 }
-
+.auth-card-register{
+    width: min(100%, 780px);
+}
+.auth-card-login{
+    width: min(100%, 580px);
+}
 .auth-card h1 {
     font: 600 46px/1 var(--display);
     margin: 0 0 16px
@@ -3373,4 +3379,43 @@ footer small {
         font-size: 11px;
         border-radius: 999px;
     }
+}
+
+.password-field {
+    position: relative;
+}
+
+.password-field input {
+    padding-right: 45px;
+}
+
+.password-toggle {
+    position: absolute;
+    top: 50%;
+    right: 12px;
+    transform: translateY(-50%);
+
+    width: 24px;
+    height: 24px;
+
+    border: 0;
+    background: transparent;
+    padding: 0;
+
+    cursor: pointer;
+
+    color: #777;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.password-toggle:hover {
+    color: #222;
+}
+
+.eye-icon {
+    width: 19px;
+    height: 19px;
+    display: block;
 }

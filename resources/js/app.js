@@ -109,3 +109,38 @@ document.querySelectorAll('[data-gallery]').forEach((gallery) => {
 	gallery.querySelector('[data-gallery-prev]')?.addEventListener('click', () => showImage(current - 1));
 	gallery.querySelector('[data-gallery-next]')?.addEventListener('click', () => showImage(current + 1));
 });
+
+document.querySelectorAll('.password-toggle').forEach(button => {
+    button.addEventListener('click', () => {
+        const input = button.parentElement.querySelector('input');
+
+        const visible = input.type === 'text';
+
+        input.type = visible ? 'password' : 'text';
+
+        button.setAttribute(
+            'aria-label',
+            visible ? 'Mostrar contraseña' : 'Ocultar contraseña'
+        );
+
+        button.innerHTML = visible
+            ? `
+                <svg class="eye-icon" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="1.8"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6S2 12 2 12z" />
+                    <circle cx="12" cy="12" r="2.5" />
+                </svg>
+            `
+            : `
+                <svg class="eye-icon" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="1.8"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M3 3l18 18" />
+                    <path d="M10.6 5.1A10.8 10.8 0 0 1 12 5c6.5 0 10 7 10 7a18.3 18.3 0 0 1-3.2 4.1" />
+                    <path d="M6.2 6.2C3.5 8.3 2 12 2 12s3.5 7 10 7c1.5 0 2.8-.3 4-.8" />
+                    <path d="M9.9 9.9a3 3 0 0 0 4.2 4.2" />
+                </svg>
+            `;
+    });
+});
