@@ -457,9 +457,6 @@
         RODANTE
     </a>
 
-    <p>
-        Encontrá. Elegí. Rodá.
-    </p>
 
 </div>
 
