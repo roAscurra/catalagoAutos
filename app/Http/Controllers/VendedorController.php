@@ -118,6 +118,6 @@ class VendedorController extends Controller
 
     private function validated(Request $request): array
     {
-        return $request->validate(['tipo' => 'required|string|max:50', 'marca_id' => 'required|exists:marcas,id', 'modelo_id' => 'required|exists:modelos,id', 'anio' => 'nullable|integer|min:1900|max:2100', 'kilometros' => 'nullable|integer|min:0', 'precio' => 'nullable|numeric|min:0', 'moneda' => 'required|string|size:3', 'ubicacion' => 'nullable|string|max:150', 'imagenes' => 'nullable|array|max:12', 'imagenes.*' => 'image|mimes:jpg,jpeg,png,webp|max:5120', 'descripcion' => 'nullable|string', 'publicado' => 'boolean']);
+        return $request->validate(['tipo' => 'required|string|max:50', 'marca_id' => 'required|exists:marcas,id', 'modelo_id' => 'required|exists:modelos,id', 'anio' => 'nullable|integer|min:1900|max:2100', 'kilometros' => 'nullable|integer|min:0', 'precio' => 'nullable|numeric|min:0', 'moneda' => 'required|string|size:3','combustible' => 'required|in:Nafta,Diesel,GNC,Electrico,Nafta + GNC', 'ubicacion' => 'nullable|string|max:150', 'imagenes' => 'nullable|array|max:12', 'imagenes.*' => 'image|mimes:jpg,jpeg,png,webp|max:5120', 'descripcion' => 'nullable|string', 'publicado' => 'boolean']);
     }
 }

@@ -685,7 +685,7 @@
 }
 
 .topbar nav a:hover {
-    color: var(--ink)
+    color: #ffff;
 }
 
 .topbar nav .nav-action {
@@ -718,7 +718,6 @@
 }
 
 .hero-art:after {
-    content: 'RODANTE / 01';
     position: absolute;
     top: 32px;
     left: 12%;
@@ -872,7 +871,7 @@ footer {
 }
 
 .admin-nav h2 {
-    color: #fff
+    color: #000000;
 }
 
 .admin-nav a {
@@ -1587,6 +1586,7 @@ textarea:focus-visible {
 .nav-action:hover,
 .button-dark:hover {
     background: #263b36;
+    color: #ffff;
     transform: translateY(-1px);
 }
 
@@ -1685,6 +1685,7 @@ textarea:focus-visible {
 .vehicle-year {
     position: relative;
     z-index: 1;
+    color: #ffff;
 }
 
 .vehicle-type {
@@ -2027,7 +2028,9 @@ a {
 
 .button-dark {
     color: white;
-    background: var(--ink)
+    background: var(--ink);
+        border-radius: 30px !important;
+
 }
 
 .button-orange {
@@ -3058,7 +3061,7 @@ footer small {
 .seller-cta,
 .preview-copy button {
     color: #fff;
-    border-radius: 6px;
+    border-radius: 30px !important;
     text-shadow: none;
 }
 
@@ -3069,6 +3072,7 @@ footer small {
 .seller-cta,
 .preview-copy button {
     background: var(--ink);
+    border-radius: 30px !important;
 }
 
 .button-orange {
