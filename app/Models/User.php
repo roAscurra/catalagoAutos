@@ -13,6 +13,11 @@ class User extends Authenticatable
     /** @use HasFactory<UserFactory> */
     use HasFactory, Notifiable;
 
+    public function perfil()
+    {
+        return $this->hasOne(Perfil::class);
+    }
+
     /**
      * The attributes that are mass assignable.
      *
@@ -22,7 +27,13 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'rol',
     ];
+
+    public function tieneRol(string ...$roles): bool
+    {
+        return in_array($this->rol, $roles, true);
+    }
 
     /**
      * The attributes that should be hidden for serialization.

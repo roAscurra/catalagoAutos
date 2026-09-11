@@ -1,0 +1,1 @@
+<footer id="footer"><div class="seller-footer-brand">@if($perfil->logo)<img src="{{ asset('storage/' . $perfil->logo) }}" alt="Logo de {{ $perfil->nombre_negocio }}">@endif<strong>{{ $perfil->nombre_negocio }}</strong></div><p>{{ $perfil->instagram ? '@'.$perfil->instagram : $perfil->nombre_negocio }}</p><small>Diseñado por RODANTE</small></footer>
