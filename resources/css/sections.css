@@ -520,7 +520,7 @@ footer small {
     padding-bottom: 0.25rem;
 }
 
-.gallery-thumb {
+.detail-thumbs .gallery-thumb {
     border: 2px solid transparent;
     border-radius: var(--radius-sm);
     overflow: hidden;
@@ -528,11 +528,11 @@ footer small {
     background: none;
 }
 
-.gallery-thumb.is-active {
+.detail-thumbs.is-active {
     border-color: var(--primary);
 }
 
-.gallery-thumb img {
+.detail-thumbs img {
     width: 92px;
     height: 68px;
     object-fit: cover;
@@ -1254,3 +1254,163 @@ footer small {
     background: var(--danger-bg);
     color: var(--danger);
 }
+
+.panel-summary-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.summary-card,
+.panel-form-card,
+.plan-option,
+.profile-edit-card {
+    background: rgba(255, 255, 255, 0.8);
+    border: 1px solid rgba(23, 36, 32, 0.08);
+    border-radius: 1rem;
+    box-shadow: var(--shadow-soft);
+}
+
+.summary-card {
+    padding: 1.2rem 1.1rem;
+}
+
+.summary-card h2 {
+    margin: 0.5rem 0 0.6rem;
+    font: 600 1.6rem / 1.2 var(--display);
+    letter-spacing: -0.05em;
+}
+
+.summary-card p,
+.summary-card li,
+.summary-card dd,
+.summary-card dt,
+.profile-edit-card p,
+.profile-edit-card label,
+.plan-option p {
+    color: var(--muted);
+}
+
+.info-list,
+.stats-list {
+    margin: 0.8rem 0 0;
+    padding: 0;
+    list-style: none;
+    display: grid;
+    gap: 0.5rem;
+}
+
+.panel-form-card,
+.profile-edit-card {
+    padding: 1.2rem;
+}
+
+.card-header {
+    margin-bottom: 1rem;
+    padding-bottom: 0.8rem;
+    border-bottom: 1px solid var(--line);
+}
+
+.card-header h2 {
+    margin: 0;
+    font: 600 1.4rem / 1.2 var(--display);
+}
+
+.profile-meta {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem;
+    margin: 0;
+}
+
+.profile-meta div {
+    padding: 0.9rem 1rem;
+    border: 1px solid rgba(23, 36, 32, 0.08);
+    border-radius: 0.75rem;
+    background: rgba(245, 248, 244, 0.8);
+}
+
+.profile-meta dt {
+    margin-bottom: 0.4rem;
+    color: var(--muted);
+    font-size: 0.68rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+}
+
+.profile-meta dd {
+    margin: 0;
+    color: var(--ink);
+    font-weight: 600;
+}
+
+.plan-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1rem;
+}
+
+.plan-option {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 0.8rem;
+    padding: 1rem;
+}
+
+.plan-option.is-current {
+    border-color: rgba(29, 91, 77, 0.35);
+    background: linear-gradient(135deg, rgba(29, 91, 77, 0.06), rgba(217, 165, 108, 0.12));
+}
+
+.plan-option h3 {
+    margin: 0.35rem 0 0;
+    font: 600 1.7rem / 1.1 var(--display);
+}
+
+.plan-pill {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: fit-content;
+    min-height: 28px;
+    padding: 0.35rem 0.7rem;
+    border-radius: 999px;
+    background: rgba(29, 91, 77, 0.1);
+    color: var(--primary);
+    font-size: 0.66rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+}
+
+.plan-pill.muted {
+    background: rgba(115, 124, 121, 0.12);
+    color: var(--muted);
+}
+
+.profile-actions,
+.panel-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.8rem;
+    margin-top: 1rem;
+}
+
+.profile-edit-card .admin-form,
+.profile-edit-card form {
+    padding: 0;
+}
+
+.profile-edit-card .form-grid {
+    margin-bottom: 0;
+}
+
+@media (max-width: 820px) {
+    .panel-summary-grid,
+    .profile-meta {
+        grid-template-columns: 1fr;
+    }
+}
+

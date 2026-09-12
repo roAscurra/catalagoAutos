@@ -7,8 +7,7 @@
     @vite(['resources/css/app.css','resources/js/app.js'])
 </head>
 <body>
-<header class="topbar"><a class="brand" href="{{ route('catalogo') }}"><span>R</span> RODANTE</a><nav class="header-links"><a href="{{ route('catalogo') }}">Catálogo</a>@auth @if(auth()->user()->tieneRol('admin'))<a class="nav-action" href="{{ route('admin.dashboard') }}">Administración</a>@else<a class="nav-action" href="{{ route('panel.dashboard') }}">Mi panel</a>@endif @else<a class="nav-action" href="{{ route('login') }}">Ingresar</a>@endauth</nav></header>
-<nav class="mobile-quick-nav" aria-label="Accesos rápidos"><a href="{{ route('catalogo') }}">Catálogo</a>@auth @if(auth()->user()->tieneRol('admin'))<a href="{{ route('admin.dashboard') }}">Admin</a>@else<a href="{{ route('panel.dashboard') }}">Mi panel</a>@endif @else<a href="{{ route('login') }}">Ingresar</a>@endauth</nav>
+<header class="topbar"><a class="brand" href="{{ route('catalogo') }}"><span>R</span> RODANTE</a><nav><a href="{{ route('catalogo') }}">Catálogo</a>@auth @if(auth()->user()->tieneRol('admin'))<a class="nav-action" href="{{ route('admin.dashboard') }}">Administración</a>@else<a class="nav-action" href="{{ route('panel.dashboard') }}">Mi panel</a>@endif @else<a class="nav-action" href="{{ route('login') }}">Ingresar</a>@endauth</nav></header>
 <main class="vehicle-detail">
     <a class="eyebrow back-link" href="{{ route('catalogo') }}">Catálogo / {{ ucfirst($vehiculo->tipo) }}</a>
     @php

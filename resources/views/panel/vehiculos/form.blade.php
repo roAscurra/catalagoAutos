@@ -273,6 +273,30 @@
         @enderror
     </label>
 
+    <label class="full upload-field">
+        Fotos de la venta
+
+        <input
+            type="file"
+            name="imagenes_venta[]"
+            accept="image/jpeg,image/png,image/webp"
+            multiple
+            data-sale-input
+            disabled
+        >
+
+        <small>
+            Se usan para documentar la operación vendida y opcionalmente mostrarla en la landing.
+        </small>
+
+        @error('imagenes_venta')
+            <small class="field-error">{{ $message }}</small>
+        @enderror
+
+        @error('imagenes_venta.*')
+            <small class="field-error">{{ $message }}</small>
+        @enderror
+    </label>
 
     <label class="full">
         Descripción
@@ -299,6 +323,46 @@
         Publicado
     </label>
 
+    <label class="check">
+        <input
+            type="checkbox"
+            name="vendido"
+            value="1"
+            id="vendido-toggle"
+            @checked(old('vendido', $item?->vendido ?? false))
+        >
+
+        Vendido
+    </label>
+
+    <label class="check">
+        <input
+            type="checkbox"
+            name="mostrar_en_landing"
+            value="1"
+            @checked(old('mostrar_en_landing', $item?->mostrar_en_landing ?? false))
+        >
+
+        Mostrar en la landing
+    </label>
+
+    <label>
+        Fecha de venta
+
+        <input
+            type="date"
+            name="fecha_venta"
+            id="fecha_venta"
+            value="{{ old('fecha_venta', $item?->fecha_venta?->format('Y-m-d')) }}"
+            data-sale-date
+            disabled
+        >
+
+        @error('fecha_venta')
+            <small class="field-error">{{ $message }}</small>
+        @enderror
+    </label>
+
 </div>
 
 
@@ -317,6 +381,21 @@
     </div>
 @endif
 
+@if($editing && $item->ventaImagenes->isNotEmpty())
+    <div class="current-gallery">
+        <p class="eyebrow">Fotos de la venta</p>
+
+        <div class="detail-thumbs">
+            @foreach($item->ventaImagenes as $image)
+                <img
+                    src="{{ asset('storage/' . $image->ruta) }}"
+                    alt="Imagen de venta"
+                >
+            @endforeach
+        </div>
+    </div>
+@endif
+
 
 <button class="button button-orange" type="submit">
     {{ $editing ? 'Guardar cambios' : 'Publicar vehículo' }}
@@ -325,5 +404,34 @@
 
 
 </form>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const toggle = document.getElementById('vendido-toggle');
+        const saleDate = document.getElementById('fecha_venta');
+        const saleFiles = document.querySelectorAll('[data-sale-input]');
+
+        function syncSaleFields() {
+            const isSold = !!toggle && toggle.checked;
+
+            if (saleDate) {
+                saleDate.disabled = !isSold;
+                saleDate.required = isSold;
+            }
+
+            saleFiles.forEach((input) => {
+                input.disabled = !isSold;
+                if (!isSold) {
+                    input.value = '';
+                }
+            });
+        }
+
+        if (toggle) {
+            toggle.addEventListener('change', syncSaleFields);
+            syncSaleFields();
+        }
+    });
+</script>
 
 @endsection

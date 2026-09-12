@@ -218,3 +218,35 @@ document.querySelectorAll('.password-toggle').forEach(button => {
             `;
     });
 });
+
+document.querySelectorAll('.stat-counter').forEach(counter => {
+    const target = Number(counter.dataset.target);
+
+    if (!target) {
+        counter.textContent = '0';
+        return;
+    }
+
+    const duration = 1200;
+    const start = performance.now();
+
+    const animate = (currentTime) => {
+        const progress = Math.min(
+            (currentTime - start) / duration,
+            1
+        );
+
+        const easedProgress = 1 - Math.pow(1 - progress, 3);
+        const current = Math.floor(target * easedProgress);
+
+        counter.textContent = current.toLocaleString('es-AR');
+
+        if (progress < 1) {
+            requestAnimationFrame(animate);
+        } else {
+            counter.textContent = target.toLocaleString('es-AR');
+        }
+    };
+
+    requestAnimationFrame(animate);
+});

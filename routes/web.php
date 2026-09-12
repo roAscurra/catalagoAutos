@@ -18,6 +18,11 @@ Route::middleware('guest')->group(function () {
 Route::post('/salir', [AuthController::class, 'logout'])->middleware('auth')->name('logout');
 Route::middleware(['auth', 'rol:agencia,individual'])->prefix('panel')->name('panel.')->group(function () {
     Route::get('/', [VendedorController::class, 'dashboard'])->name('dashboard');
+    Route::get('/mi-perfil', [VendedorController::class, 'perfil'])->name('perfil');
+    Route::get('/mi-perfil/editar', [VendedorController::class, 'editPerfil'])->name('perfil.edit');
+    Route::put('/mi-perfil', [VendedorController::class, 'updatePerfil'])->name('perfil.update');
+    Route::get('/mi-plan', [VendedorController::class, 'plan'])->name('plan');
+    Route::put('/mi-plan', [VendedorController::class, 'updatePlan'])->name('plan.update');
     Route::get('/vehiculos/crear', [VendedorController::class, 'create'])->name('vehiculos.create');
     Route::get('/vehiculos/{vehiculo:public_id}/editar', [VendedorController::class, 'edit'])->name('vehiculos.edit');
     Route::get('/mi-pagina/editar', [VendedorController::class, 'editLanding'])->middleware('rol:agencia')->name('landing.edit');

@@ -31,6 +31,17 @@
     box-shadow: var(--shadow-card);
 }
 
+.button-secondary {
+    background: rgba(23, 36, 32, 0.06);
+    color: var(--ink);
+    border: 1px solid rgba(23, 36, 32, 0.12);
+}
+
+.button-secondary:hover {
+    background: rgba(23, 36, 32, 0.1);
+    color: var(--ink);
+}
+
 .button-dark {
     background: var(--ink);
     color: #fff;

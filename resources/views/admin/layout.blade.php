@@ -152,12 +152,12 @@
 
                         <span class="admin-nav-title">Cuenta</span>
 
-                        <a href="#">
+                        <a href="{{ route('panel.perfil') }}">
                             <x-heroicon-o-user-circle class="nav-icon" />
                             <span>Mi perfil</span>
                         </a>
 
-                        <a href="#">
+                        <a href="{{ route('panel.plan') }}">
                             <x-heroicon-o-credit-card class="nav-icon" />
                             <span>Mi plan</span>
                         </a>
