@@ -585,9 +585,6 @@ footer small {
         flex-wrap: wrap;
     }
 
-    .admin-nav a {
-        flex: 1 1 180px;
-    }
 
     .admin-heading,
     .seller-page-banner {
