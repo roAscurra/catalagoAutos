@@ -250,3 +250,43 @@ document.querySelectorAll('.stat-counter').forEach(counter => {
 
     requestAnimationFrame(animate);
 });
+document.querySelectorAll('.flash-success, .flash-error').forEach(toast => {
+    let timeout;
+    let remaining = 5000;
+    let startedAt;
+
+    const hideToast = () => {
+        toast.classList.add('is-hiding');
+
+        setTimeout(() => {
+            toast.remove();
+        }, 350);
+    };
+
+    const startTimer = () => {
+        startedAt = Date.now();
+
+        timeout = setTimeout(() => {
+            hideToast();
+        }, remaining);
+    };
+
+    const pauseTimer = () => {
+        clearTimeout(timeout);
+
+        remaining -= Date.now() - startedAt;
+    };
+
+    toast.addEventListener('mouseenter', pauseTimer);
+
+    toast.addEventListener('mouseleave', () => {
+        startTimer();
+    });
+
+    toast.querySelector('.flash-close')?.addEventListener('click', () => {
+        clearTimeout(timeout);
+        hideToast();
+    });
+
+    startTimer();
+});
