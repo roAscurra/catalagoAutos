@@ -13,26 +13,16 @@
 <body class="admin-body">
 
     <header class="topbar">
-        <a class="brand" href="{{ route('catalogo') }}">
-            <span>R</span> RODANTE
-        </a>
-
-        <nav>
-            <a href="{{ route('catalogo') }}">Ver catálogo</a>
-            @auth
-                @if (auth()->user()->tieneRol('admin'))
-                    <a class="nav-action" href="{{ route('admin.dashboard') }}">Administración</a>
-                @else
-                    <a class="nav-action" href="{{ route('panel.dashboard') }}">Mi panel</a>
-                @endif
-                <form method="POST" action="{{ route('logout') }}" class="header-logout">
-                    @csrf
-                    <button type="submit">Cerrar sesión</button>
-                </form>
-            @else
-                <a class="nav-action" href="{{ route('login') }}">Ingresar</a>
-            @endauth
-        </nav>
+        <div class="topbar-left">
+            <button class="mobile-nav-toggle" type="button" aria-label="Abrir menú" aria-expanded="false">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M3 6h18M3 12h18M3 18h18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                </svg>
+            </button>
+            <a class="brand" href="{{ route('catalogo') }}">
+                <span>R</span> RODANTE
+            </a>
+        </div>
     </header>
 
     <div class="admin-shell">
@@ -120,6 +110,23 @@
 
                     </nav>
 
+                    <nav class="admin-nav-section">
+                        <span class="admin-nav-title">Accesos</span>
+
+                        <a href="{{ route('catalogo') }}">
+                            <x-heroicon-o-arrow-top-right-on-square class="nav-icon" />
+                            <span>Ver catálogo</span>
+                        </a>
+
+                        <form method="POST" action="{{ route('logout') }}" class="header-logout">
+                            @csrf
+                            <button type="submit">
+                                <x-heroicon-o-arrow-left-start-on-rectangle class="nav-icon" />
+                                <span>Cerrar sesión</span>
+                            </button>
+                        </form>
+                    </nav>
+
                 @else
 
                     <div class="admin-nav-header">
@@ -157,10 +164,32 @@
 
                     </nav>
 
+                    <nav class="admin-nav-section">
+                        <span class="admin-nav-title">Accesos</span>
+
+                        <a href="{{ route('catalogo') }}">
+                            <x-heroicon-o-arrow-top-right-on-square class="nav-icon" />
+                            <span>Ver catálogo</span>
+                        </a>
+
+                        <a href="{{ route('panel.dashboard') }}">
+                            <x-heroicon-o-home class="nav-icon" />
+                            <span>Mi panel</span>
+                        </a>
+
+                        <form method="POST" action="{{ route('logout') }}" class="header-logout">
+                            @csrf
+                            <button type="submit">
+                                <x-heroicon-o-arrow-left-start-on-rectangle class="nav-icon" />
+                                <span>Cerrar sesión</span>
+                            </button>
+                        </form>
+                    </nav>
+
                 @endif
 
             @endauth
-
+               
         </aside>
         <main class="admin-content">
 

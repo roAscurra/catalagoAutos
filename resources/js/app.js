@@ -1,5 +1,79 @@
 import './bootstrap';
 
+const adminToggle = document.querySelector('.mobile-nav-toggle');
+const adminBody = document.body;
+
+if (adminToggle) {
+	adminToggle.addEventListener('click', () => {
+		const isOpen = adminBody.classList.toggle('admin-nav-open');
+		adminToggle.setAttribute('aria-expanded', String(isOpen));
+		adminToggle.setAttribute('aria-label', isOpen ? 'Cerrar menú' : 'Abrir menú');
+	});
+
+	document.querySelectorAll('.admin-nav a').forEach((link) => {
+		link.addEventListener('click', () => {
+			adminBody.classList.remove('admin-nav-open');
+			adminToggle.setAttribute('aria-expanded', 'false');
+			adminToggle.setAttribute('aria-label', 'Abrir menú');
+		});
+	});
+
+	document.addEventListener('click', (event) => {
+		if (!adminBody.classList.contains('admin-nav-open')) return;
+		const clickedOnToggle = event.target.closest('.mobile-nav-toggle');
+		const clickedInsideNav = event.target.closest('.admin-nav');
+		if (!clickedOnToggle && !clickedInsideNav) {
+			adminBody.classList.remove('admin-nav-open');
+			adminToggle.setAttribute('aria-expanded', 'false');
+			adminToggle.setAttribute('aria-label', 'Abrir menú');
+		}
+	});
+
+	window.addEventListener('resize', () => {
+		if (window.innerWidth > 820) {
+			adminBody.classList.remove('admin-nav-open');
+			adminToggle.setAttribute('aria-expanded', 'false');
+			adminToggle.setAttribute('aria-label', 'Abrir menú');
+		}
+	});
+}
+
+const topbarToggle = document.querySelector('.topbar-toggle');
+const topbarNav = document.querySelector('.topbar nav');
+
+if (topbarToggle && topbarNav) {
+	const closeTopbarNav = () => {
+		topbarNav.classList.remove('is-open');
+		topbarToggle.setAttribute('aria-expanded', 'false');
+		topbarToggle.setAttribute('aria-label', 'Abrir menú');
+	};
+
+	topbarToggle.addEventListener('click', () => {
+		const isOpen = topbarNav.classList.toggle('is-open');
+		topbarToggle.setAttribute('aria-expanded', String(isOpen));
+		topbarToggle.setAttribute('aria-label', isOpen ? 'Cerrar menú' : 'Abrir menú');
+	});
+
+	topbarNav.querySelectorAll('a').forEach((link) => {
+		link.addEventListener('click', closeTopbarNav);
+	});
+
+	document.addEventListener('click', (event) => {
+		if (!topbarNav.classList.contains('is-open')) return;
+		const clickedOnToggle = event.target.closest('.topbar-toggle');
+		const clickedInsideNav = event.target.closest('.topbar nav');
+		if (!clickedOnToggle && !clickedInsideNav) {
+			closeTopbarNav();
+		}
+	});
+
+	window.addEventListener('resize', () => {
+		if (window.innerWidth > 750) {
+			closeTopbarNav();
+		}
+	});
+}
+
 const sellerLanding = document.querySelector('.seller-landing');
 
 if (sellerLanding) {

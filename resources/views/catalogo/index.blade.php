@@ -14,50 +14,54 @@
 
 </head>
 
-<body>
+<body class="catalogo-home">
 
 <header class="topbar">
+    <div class="topbar-left">
+        <a class="brand" href="{{ route('catalogo') }}">
+            <span>R</span>
+            RODANTE
+        </a>
+    </div>
 
+    <button class="topbar-toggle" type="button" aria-label="Abrir menú" aria-expanded="false">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M3 6h18M3 12h18M3 18h18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+        </svg>
+    </button>
 
-<a class="brand" href="{{ route('catalogo') }}">
-    <span>R</span>
-    RODANTE
-</a>
+    <nav>
+        <a href="#catalogo">Catálogo</a>
+        <a href="#planes">Planes</a>
 
-<nav>
-    <a href="#catalogo">Catálogo</a>
-    <a href="#planes">Planes</a>
+        @auth
 
-    @auth
+            @if(auth()->user()->tieneRol('admin'))
 
-        @if(auth()->user()->tieneRol('admin'))
+                <a class="nav-action" href="{{ route('admin.dashboard') }}">
+                    Administración <b>↗</b>
+                </a>
 
-            <a class="nav-action" href="{{ route('admin.dashboard') }}">
-                Administración <b>↗</b>
-            </a>
+            @else
+
+                <a class="nav-action" href="{{ route('panel.dashboard') }}">
+                    Mi panel <b>↗</b>
+                </a>
+
+            @endif
 
         @else
 
-            <a class="nav-action" href="{{ route('panel.dashboard') }}">
-                Mi panel <b>↗</b>
+            <a class="nav-action" href="{{ route('register') }}">
+                Publicar vehículo <b>↗</b>
             </a>
 
-        @endif
+            <a href="{{ route('login') }}">
+                Ingresar
+            </a>
 
-    @else
-
-        <a class="nav-action" href="{{ route('register') }}">
-            Publicar vehículo <b>↗</b>
-        </a>
-
-        <a href="{{ route('login') }}">
-            Ingresar
-        </a>
-
-    @endauth
-</nav>
-
-
+        @endauth
+    </nav>
 </header>
 
 <main>
