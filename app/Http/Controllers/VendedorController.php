@@ -7,6 +7,7 @@ use App\Models\Plan;
 use App\Models\Vehiculo;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 
 class VendedorController extends Controller
@@ -97,17 +98,28 @@ class VendedorController extends Controller
     {
         $perfil = $request->user()->perfil()->firstOrFail();
         abort_unless($perfil->esAgencia(), 403);
+
         $data = $request->validate([
             'nombre_negocio' => 'required|string|max:255', 'slug' => 'required|string|max:100|alpha_dash|unique:perfil,slug,' . $perfil->id,
             'descripcion' => 'nullable|string', 'telefono' => 'nullable|string|max:30', 'direccion' => 'nullable|string|max:255',
-            'plantilla' => 'required|in:editorial,alto-contraste,calma', 'color_principal' => 'required|string|size:7',
-            'color_secundario' => 'required|string|size:7', 'titulo_portada' => 'nullable|string|max:120', 'subtitulo_portada' => 'nullable|string|max:500',
-            'whatsapp' => 'nullable|string|max:30', 'instagram' => 'nullable|string|max:100', 'facebook' => 'nullable|string|max:100',
+            'plantilla' => 'required|in:editorial,alto-contraste,calma', 'hero_estilo' => 'required|in:showcase,spotlight,gallery',
+            'color_principal' => 'required|string|size:7', 'color_secundario' => 'required|string|size:7', 'titulo_portada' => 'nullable|string|max:120',
+            'subtitulo_portada' => 'nullable|string|max:500', 'whatsapp' => 'nullable|string|max:30', 'instagram' => 'nullable|string|max:100', 'facebook' => 'nullable|string|max:100',
             'imagen_portada' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:5120',
             'logo' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
             'secciones' => 'nullable|array', 'secciones.*' => 'in:hero,intro,inventario,contacto,footer',
         ]);
-        $data['secciones'] = array_values(array_unique($data['secciones'] ?? []));
+
+        $allowedSections = ['hero', 'intro', 'inventario', 'contacto', 'footer'];
+        $data['secciones'] = array_values(array_unique(array_filter(
+            $data['secciones'] ?? $perfil::DEFAULT_SECTIONS,
+            fn ($section) => in_array($section, $allowedSections, true)
+        )));
+
+        if ($data['secciones'] === []) {
+            $data['secciones'] = $perfil::DEFAULT_SECTIONS;
+        }
+
         if ($request->hasFile('imagen_portada')) {
             if ($perfil->imagen_portada) Storage::disk('public')->delete($perfil->imagen_portada);
             $data['imagen_portada'] = $request->file('imagen_portada')->store('perfiles', 'public');
@@ -116,7 +128,9 @@ class VendedorController extends Controller
             if ($perfil->logo) Storage::disk('public')->delete($perfil->logo);
             $data['logo'] = $request->file('logo')->store('perfiles/logos', 'public');
         }
+
         $perfil->update($data);
+
         return redirect()->route('panel.landing.edit')->with('success', 'Tu página fue actualizada.');
     }
 
@@ -209,24 +223,28 @@ class VendedorController extends Controller
     private function validated(Request $request): array
     {
         $validated = $request->validate([
-            'tipo' => 'required|string|max:50',
-            'marca_id' => 'required|exists:marcas,id',
-            'modelo_id' => 'required|exists:modelos,id',
-            'anio' => 'nullable|integer|min:1900|max:2100',
-            'kilometros' => 'nullable|integer|min:0',
-            'precio' => 'nullable|numeric|min:0',
-            'moneda' => 'required|string|size:3',
-            'combustible' => 'required|in:Nafta,Diesel,GNC,Electrico,Nafta + GNC',
-            'ubicacion' => 'nullable|string|max:150',
-            'imagenes' => 'nullable|array|max:12',
-            'imagenes.*' => 'image|mimes:jpg,jpeg,png,webp|max:5120',
-            'imagenes_venta' => 'nullable|array|max:12',
-            'imagenes_venta.*' => 'image|mimes:jpg,jpeg,png,webp|max:5120',
-            'descripcion' => 'nullable|string',
-            'publicado' => 'boolean',
-            'vendido' => 'boolean',
-            'mostrar_en_landing' => 'boolean',
-            'fecha_venta' => 'nullable|date',
+            'tipo' => ['required', 'string', 'max:50'],
+            'marca_id' => ['required', 'exists:marcas,id'],
+            'modelo_id' => [
+                'required',
+                'exists:modelos,id',
+                Rule::exists('modelos', 'id')->where(fn ($query) => $query->where('marca_id', $request->input('marca_id'))),
+            ],
+            'anio' => ['nullable', 'integer', 'min:1900', 'max:2100'],
+            'kilometros' => ['nullable', 'integer', 'min:0'],
+            'precio' => ['nullable', 'numeric', 'min:0'],
+            'moneda' => ['required', 'string', 'size:3'],
+            'combustible' => ['required', 'in:Nafta,Diesel,GNC,Electrico,Nafta + GNC'],
+            'ubicacion' => ['nullable', 'string', 'max:150'],
+            'imagenes' => ['nullable', 'array', 'max:12'],
+            'imagenes.*' => ['image', 'mimes:jpg,jpeg,png,webp', 'max:5120'],
+            'imagenes_venta' => ['nullable', 'array', 'max:12'],
+            'imagenes_venta.*' => ['image', 'mimes:jpg,jpeg,png,webp', 'max:5120'],
+            'descripcion' => ['nullable', 'string'],
+            'publicado' => ['boolean'],
+            'vendido' => ['boolean'],
+            'mostrar_en_landing' => ['boolean'],
+            'fecha_venta' => ['nullable', 'date'],
         ]);
 
         if ($request->boolean('vendido') && !$request->filled('fecha_venta')) {
@@ -238,6 +256,30 @@ class VendedorController extends Controller
         if (!$request->boolean('vendido') && ($request->hasFile('imagenes_venta') || $request->filled('fecha_venta'))) {
             throw ValidationException::withMessages([
                 'vendido' => ['Si subís fotos o una fecha de venta, el vehículo debe marcarse como vendido.'],
+            ]);
+        }
+
+        if ($request->filled('modelo_id') && $request->filled('marca_id')) {
+            $modeloBelongsToMarca = \App\Models\Modelo::where('id', $request->input('modelo_id'))
+                ->where('marca_id', $request->input('marca_id'))
+                ->exists();
+
+            if (!$modeloBelongsToMarca) {
+                throw ValidationException::withMessages([
+                    'modelo_id' => ['El modelo seleccionado no corresponde a la marca elegida.'],
+                ]);
+            }
+        }
+
+        if ($request->boolean('mostrar_en_landing') && !$request->boolean('publicado')) {
+            throw ValidationException::withMessages([
+                'mostrar_en_landing' => ['Un vehículo debe estar publicado para mostrarse en la landing.'],
+            ]);
+        }
+
+        if ($request->boolean('vendido') && $request->boolean('publicado') === false) {
+            throw ValidationException::withMessages([
+                'publicado' => ['Un vehículo vendido debe permanecer publicado para poder consultarse en el catálogo.'],
             ]);
         }
 

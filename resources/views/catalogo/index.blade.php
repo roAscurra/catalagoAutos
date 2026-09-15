@@ -87,15 +87,21 @@
             compará opciones y encontrá el que mejor se adapta a vos.
         </p>
 
-        <a class="button button-dark" href="#catalogo">
-            Explorar vehículos
-            <span>↓</span>
-        </a>
+        <div class="hero-actions">
+            <a class="button button-dark" href="#catalogo">
+                Explorar vehículos
+                <span>↓</span>
+            </a>
+
+            <a class="button button-secondary" href="{{ route('register') }}">
+                Publicar tu auto
+            </a>
+        </div>
 
     </div>
 
 
-    <div class="hero-art">
+    <div class="hero-art" aria-hidden="true">
 
         <div class="sun"></div>
 

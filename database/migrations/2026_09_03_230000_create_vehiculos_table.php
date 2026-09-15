@@ -23,6 +23,7 @@ return new class extends Migration
             $table->text('descripcion')->nullable();
             $table->boolean('publicado')->default(true);
             $table->timestamps();
+            $table->softDeletes();
             $table->index(['tipo', 'publicado']);
         });
     }

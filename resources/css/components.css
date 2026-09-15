@@ -22,7 +22,7 @@
 }
 
 .button {
-    background: linear-gradient(135deg, var(--primary), var(--primary-strong));
+    background: var(--primary);
     color: #fff;
     box-shadow: var(--shadow-soft);
 }

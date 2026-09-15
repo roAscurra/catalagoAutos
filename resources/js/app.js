@@ -77,8 +77,11 @@ if (topbarToggle && topbarNav) {
 const sellerLanding = document.querySelector('.seller-landing');
 
 if (sellerLanding) {
-	sellerLanding.style.setProperty('--seller-primary', sellerLanding.dataset.sellerPrimary);
-	sellerLanding.style.setProperty('--seller-secondary', sellerLanding.dataset.sellerSecondary);
+	const primary = sellerLanding.dataset.sellerPrimary || '#1d5b4d';
+	const secondary = sellerLanding.dataset.sellerSecondary || '#d9a56c';
+
+	sellerLanding.style.setProperty('--seller-primary', primary);
+	sellerLanding.style.setProperty('--seller-secondary', secondary);
 
 	const coverImage = sellerLanding.querySelector('[data-cover-image]');
 	if (coverImage) {
@@ -106,12 +109,25 @@ if (landingEditor) {
 	const primary = landingEditor.querySelector('[data-preview="primary"]');
 	const secondary = landingEditor.querySelector('[data-preview="secondary"]');
 	const template = landingEditor.querySelector('[data-preview="template"]');
+	const heroStyle = landingEditor.querySelector('[data-preview="heroStyle"]');
 	const applyTheme = () => {
-		preview.style.setProperty('--preview-primary', primary.value);
-		preview.style.setProperty('--preview-secondary', secondary.value);
-		preview.dataset.template = template.value;
+		if (!primary || !secondary || !template) return;
+		const selectedTemplate = template.value || 'editorial';
+		const selectedHeroStyle = heroStyle?.value || 'showcase';
+		preview.style.setProperty('--preview-primary', primary.value || '#1d5b4d');
+		preview.style.setProperty('--preview-secondary', secondary.value || '#d9a56c');
+		preview.dataset.template = selectedTemplate;
+		preview.dataset.heroStyle = selectedHeroStyle;
+		preview.classList.remove('template-editorial', 'template-alto-contraste', 'template-calma');
+		preview.classList.remove('hero-showcase', 'hero-spotlight', 'hero-gallery');
+		preview.classList.add(`template-${selectedTemplate}`);
+		preview.classList.add(`hero-${selectedHeroStyle}`);
 	};
-	[primary, secondary, template].forEach((input) => input.addEventListener('input', applyTheme));
+	[primary, secondary, template, heroStyle].forEach((input) => {
+		if (!input) return;
+		input.addEventListener('input', applyTheme);
+		input.addEventListener('change', applyTheme);
+	});
 	applyTheme();
 
 	landingEditor.querySelectorAll('[data-preview-section]').forEach((toggle) => {
@@ -155,11 +171,17 @@ if (landingEditor) {
 
 	const coverInput = landingEditor.querySelector('[data-preview="cover"]');
 	const cover = preview.querySelector('.preview-cover');
+	if (cover) {
+		const initialCoverUrl = cover.dataset.coverImage;
+		if (initialCoverUrl) {
+			cover.style.backgroundImage = `url("${initialCoverUrl}")`;
+		}
+	}
 	coverInput?.addEventListener('change', () => {
 		const file = coverInput.files?.[0];
 		if (!file) return;
 		const reader = new FileReader();
-		reader.addEventListener('load', () => { cover.style.backgroundImage = `url("${reader.result}")`; });
+		reader.addEventListener('load', () => { if (cover) cover.style.backgroundImage = `url("${reader.result}")`; });
 		reader.readAsDataURL(file);
 	});
 }

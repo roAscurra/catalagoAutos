@@ -68,7 +68,7 @@
     <label>
         Marca
 
-        <select name="marca_id" required>
+        <select name="marca_id" id="marca-select" required>
             <option value="">Seleccionar marca</option>
 
             @foreach($marcas as $marca)
@@ -90,13 +90,14 @@
     <label>
         Modelo
 
-        <select name="modelo_id" required>
+        <select name="modelo_id" id="modelo-select" required>
             <option value="">Seleccionar modelo</option>
 
             @foreach($marcas as $marca)
                 @foreach($marca->modelos as $modelo)
                     <option
                         value="{{ $modelo->id }}"
+                        data-marca-id="{{ $marca->id }}"
                         @selected(old('modelo_id', $item?->modelo_id) == $modelo->id)
                     >
                         {{ $marca->nombre }} · {{ $modelo->nombre }}
@@ -273,6 +274,42 @@
         @enderror
     </label>
 
+    <label class="full">
+        Descripción
+
+        <textarea
+            name="descripcion"
+            rows="5"
+        >{{ old('descripcion', $item?->descripcion) }}</textarea>
+
+        @error('descripcion')
+            <small class="field-error">{{ $message }}</small>
+        @enderror
+    </label>
+
+    <label class="check">
+        <input
+            type="checkbox"
+            name="publicado"
+            value="1"
+            @checked(old('publicado', $item?->publicado ?? true))
+        >
+
+        Publicado
+    </label>
+
+    <label class="check">
+        <input
+            type="checkbox"
+            name="vendido"
+            value="1"
+            id="vendido-toggle"
+            @checked(old('vendido', $item?->vendido ?? false))
+        >
+
+        Vendido
+    </label>
+
     <label class="full upload-field">
         Fotos de la venta
 
@@ -296,43 +333,6 @@
         @error('imagenes_venta.*')
             <small class="field-error">{{ $message }}</small>
         @enderror
-    </label>
-
-    <label class="full">
-        Descripción
-
-        <textarea
-            name="descripcion"
-            rows="5"
-        >{{ old('descripcion', $item?->descripcion) }}</textarea>
-
-        @error('descripcion')
-            <small class="field-error">{{ $message }}</small>
-        @enderror
-    </label>
-
-
-    <label class="check">
-        <input
-            type="checkbox"
-            name="publicado"
-            value="1"
-            @checked(old('publicado', $item?->publicado ?? true))
-        >
-
-        Publicado
-    </label>
-
-    <label class="check">
-        <input
-            type="checkbox"
-            name="vendido"
-            value="1"
-            id="vendido-toggle"
-            @checked(old('vendido', $item?->vendido ?? false))
-        >
-
-        Vendido
     </label>
 
     <label class="check">
@@ -410,6 +410,8 @@
         const toggle = document.getElementById('vendido-toggle');
         const saleDate = document.getElementById('fecha_venta');
         const saleFiles = document.querySelectorAll('[data-sale-input]');
+        const marcaSelect = document.getElementById('marca-select');
+        const modeloSelect = document.getElementById('modelo-select');
 
         function syncSaleFields() {
             const isSold = !!toggle && toggle.checked;
@@ -427,9 +429,50 @@
             });
         }
 
+        function syncModelosByMarca() {
+            if (!marcaSelect || !modeloSelect) {
+                return;
+            }
+
+            const selectedMarcaId = marcaSelect.value;
+            const options = [...modeloSelect.querySelectorAll('option[data-marca-id]')];
+            const selectedModeloValue = modeloSelect.value;
+
+            let firstOption = null;
+
+            options.forEach((option) => {
+                const matchesMarca = !selectedMarcaId || option.dataset.marcaId === selectedMarcaId;
+                option.hidden = !matchesMarca;
+                option.disabled = !matchesMarca;
+                option.selected = matchesMarca && option.value === selectedModeloValue && selectedMarcaId;
+                if (!firstOption && matchesMarca) {
+                    firstOption = option;
+                }
+            });
+
+            if (selectedMarcaId) {
+                const hasSelectedMatchingModel = options.some((option) => option.dataset.marcaId === selectedMarcaId && option.value === selectedModeloValue);
+                if (!hasSelectedMatchingModel) {
+                    modeloSelect.value = '';
+                }
+            } else {
+                modeloSelect.value = '';
+            }
+
+            modeloSelect.disabled = !selectedMarcaId;
+            if (!selectedMarcaId) {
+                modeloSelect.value = '';
+            }
+        }
+
         if (toggle) {
             toggle.addEventListener('change', syncSaleFields);
             syncSaleFields();
+        }
+
+        if (marcaSelect && modeloSelect) {
+            marcaSelect.addEventListener('change', syncModelosByMarca);
+            syncModelosByMarca();
         }
     });
 </script>
