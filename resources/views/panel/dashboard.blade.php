@@ -30,18 +30,17 @@
     </div>
 </div>@endif
 <h2 class="panel-title">Tus publicaciones</h2>
-<div class="vehicle-grid">@forelse($perfil->vehiculos as $vehiculo)@php($image = $vehiculo->imagenes->first()?->ruta ?:
-    $vehiculo->imagen)@php($image = $image ? asset('storage/'.$image) :
-    'https://images.unsplash.com/photo-1553440569-bcc63803a83d?auto=format&fit=crop&w=900&q=80')<article
-        class="vehicle-card"><a href="{{ route('vehiculo.show',$vehiculo) }}">
-            <div class="vehicle-image" style="background-image:url('{{ $image }}')"><span
-                    class="vehicle-type">{{ ucfirst($vehiculo->tipo) }}</span></div>
+<div class="vehicle-grid">@forelse($perfil->vehiculos as $vehiculo)@php($image = $vehiculo->imagenes->first()?->ruta ?: $vehiculo->imagen)@php($image = $image ? asset('storage/'.$image) : 'https://images.unsplash.com/photo-1553440569-bcc63803a83d?auto=format&fit=crop&w=900&q=80')<article class="vehicle-card @if($vehiculo->vendido) sold-card @endif"><a href="{{ route('vehiculo.show',$vehiculo) }}">
+            <div class="vehicle-image" style="background-image:url('{{ $image }}')"><span class="vehicle-type">{{ ucfirst($vehiculo->tipo) }}</span>@if($vehiculo->vendido)<span class="vehicle-status sold">Vendido</span>@endif</div>
         </a>
         <div class="vehicle-info">
             <p class="muted">{{ $vehiculo->marca?->nombre }}</p>
             <h3>{{ $vehiculo->modelo?->nombre }}</h3>
             <div class="vehicle-meta"><span>{{ $vehiculo->anio }}</span><strong>{{ $vehiculo->moneda }}
                     {{ number_format($vehiculo->precio ?? 0,0,',','.') }}</strong></div>
+            @if($vehiculo->vendido)
+                <p class="sale-meta">{{ $vehiculo->fecha_venta ? 'Venta: ' . $vehiculo->fecha_venta->format('d/m/Y') : 'Venta registrada' }}</p>
+            @endif
             <div class="card-actions"><a class="text-button"
                     href="{{ route('panel.vehiculos.edit',['vehiculo' => $vehiculo->public_id]) }}">Editar
                     publicación</a>
