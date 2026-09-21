@@ -1,0 +1,41 @@
+:root {
+    --paper: #f4f0ea;
+    --paper-strong: #e9e0d2;
+    --paper-soft: #faf7f2;
+    --surface: rgba(255, 255, 255, 0.76);
+    --surface-solid: #ffffff;
+    --surface-strong: #edf3ee;
+    --ink: #172420;
+    --ink-soft: #2f403d;
+    --muted: #60746f;
+    --line: rgba(23, 36, 32, 0.1);
+    --primary: #1d5b4d;
+    --primary-strong: #143f36;
+    --primary-soft: rgba(29, 91, 77, 0.12);
+    --accent: #d9a56c;
+    --accent-soft: rgba(217, 165, 108, 0.16);
+    --focus: #2f8f83;
+    --success: #215a3e;
+    --success-bg: #e8f3ee;
+    --danger: #8f3a2c;
+    --danger-bg: #fbeae5;
+    --shadow-soft: 0 12px 28px rgba(20, 38, 31, 0.08);
+    --shadow-card: 0 18px 42px rgba(19, 33, 28, 0.09);
+    --shadow-strong: 0 26px 54px rgba(17, 31, 27, 0.16);
+    --display: 'Space Grotesk', 'Segoe UI', sans-serif;
+    --body: 'DM Sans', 'Segoe UI', sans-serif;
+    --radius-sm: 12px;
+    --radius-md: 18px;
+    --radius-lg: 26px;
+    --radius-xl: 32px;
+    --page-width: 1280px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+}

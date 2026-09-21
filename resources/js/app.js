@@ -1,10 +1,87 @@
 import './bootstrap';
 
+const adminToggle = document.querySelector('.mobile-nav-toggle');
+const adminBody = document.body;
+
+if (adminToggle) {
+	adminToggle.addEventListener('click', () => {
+		const isOpen = adminBody.classList.toggle('admin-nav-open');
+		adminToggle.setAttribute('aria-expanded', String(isOpen));
+		adminToggle.setAttribute('aria-label', isOpen ? 'Cerrar menú' : 'Abrir menú');
+	});
+
+	document.querySelectorAll('.admin-nav a').forEach((link) => {
+		link.addEventListener('click', () => {
+			adminBody.classList.remove('admin-nav-open');
+			adminToggle.setAttribute('aria-expanded', 'false');
+			adminToggle.setAttribute('aria-label', 'Abrir menú');
+		});
+	});
+
+	document.addEventListener('click', (event) => {
+		if (!adminBody.classList.contains('admin-nav-open')) return;
+		const clickedOnToggle = event.target.closest('.mobile-nav-toggle');
+		const clickedInsideNav = event.target.closest('.admin-nav');
+		if (!clickedOnToggle && !clickedInsideNav) {
+			adminBody.classList.remove('admin-nav-open');
+			adminToggle.setAttribute('aria-expanded', 'false');
+			adminToggle.setAttribute('aria-label', 'Abrir menú');
+		}
+	});
+
+	window.addEventListener('resize', () => {
+		if (window.innerWidth > 820) {
+			adminBody.classList.remove('admin-nav-open');
+			adminToggle.setAttribute('aria-expanded', 'false');
+			adminToggle.setAttribute('aria-label', 'Abrir menú');
+		}
+	});
+}
+
+const topbarToggle = document.querySelector('.topbar-toggle');
+const topbarNav = document.querySelector('.topbar nav');
+
+if (topbarToggle && topbarNav) {
+	const closeTopbarNav = () => {
+		topbarNav.classList.remove('is-open');
+		topbarToggle.setAttribute('aria-expanded', 'false');
+		topbarToggle.setAttribute('aria-label', 'Abrir menú');
+	};
+
+	topbarToggle.addEventListener('click', () => {
+		const isOpen = topbarNav.classList.toggle('is-open');
+		topbarToggle.setAttribute('aria-expanded', String(isOpen));
+		topbarToggle.setAttribute('aria-label', isOpen ? 'Cerrar menú' : 'Abrir menú');
+	});
+
+	topbarNav.querySelectorAll('a').forEach((link) => {
+		link.addEventListener('click', closeTopbarNav);
+	});
+
+	document.addEventListener('click', (event) => {
+		if (!topbarNav.classList.contains('is-open')) return;
+		const clickedOnToggle = event.target.closest('.topbar-toggle');
+		const clickedInsideNav = event.target.closest('.topbar nav');
+		if (!clickedOnToggle && !clickedInsideNav) {
+			closeTopbarNav();
+		}
+	});
+
+	window.addEventListener('resize', () => {
+		if (window.innerWidth > 750) {
+			closeTopbarNav();
+		}
+	});
+}
+
 const sellerLanding = document.querySelector('.seller-landing');
 
 if (sellerLanding) {
-	sellerLanding.style.setProperty('--seller-primary', sellerLanding.dataset.sellerPrimary);
-	sellerLanding.style.setProperty('--seller-secondary', sellerLanding.dataset.sellerSecondary);
+	const primary = sellerLanding.dataset.sellerPrimary || '#1d5b4d';
+	const secondary = sellerLanding.dataset.sellerSecondary || '#d9a56c';
+
+	sellerLanding.style.setProperty('--seller-primary', primary);
+	sellerLanding.style.setProperty('--seller-secondary', secondary);
 
 	const coverImage = sellerLanding.querySelector('[data-cover-image]');
 	if (coverImage) {
@@ -32,12 +109,25 @@ if (landingEditor) {
 	const primary = landingEditor.querySelector('[data-preview="primary"]');
 	const secondary = landingEditor.querySelector('[data-preview="secondary"]');
 	const template = landingEditor.querySelector('[data-preview="template"]');
+	const heroStyle = landingEditor.querySelector('[data-preview="heroStyle"]');
 	const applyTheme = () => {
-		preview.style.setProperty('--preview-primary', primary.value);
-		preview.style.setProperty('--preview-secondary', secondary.value);
-		preview.dataset.template = template.value;
+		if (!primary || !secondary || !template) return;
+		const selectedTemplate = template.value || 'editorial';
+		const selectedHeroStyle = heroStyle?.value || 'showcase';
+		preview.style.setProperty('--preview-primary', primary.value || '#1d5b4d');
+		preview.style.setProperty('--preview-secondary', secondary.value || '#d9a56c');
+		preview.dataset.template = selectedTemplate;
+		preview.dataset.heroStyle = selectedHeroStyle;
+		preview.classList.remove('template-editorial', 'template-alto-contraste', 'template-calma');
+		preview.classList.remove('hero-showcase', 'hero-spotlight', 'hero-gallery');
+		preview.classList.add(`template-${selectedTemplate}`);
+		preview.classList.add(`hero-${selectedHeroStyle}`);
 	};
-	[primary, secondary, template].forEach((input) => input.addEventListener('input', applyTheme));
+	[primary, secondary, template, heroStyle].forEach((input) => {
+		if (!input) return;
+		input.addEventListener('input', applyTheme);
+		input.addEventListener('change', applyTheme);
+	});
 	applyTheme();
 
 	landingEditor.querySelectorAll('[data-preview-section]').forEach((toggle) => {
@@ -81,11 +171,17 @@ if (landingEditor) {
 
 	const coverInput = landingEditor.querySelector('[data-preview="cover"]');
 	const cover = preview.querySelector('.preview-cover');
+	if (cover) {
+		const initialCoverUrl = cover.dataset.coverImage;
+		if (initialCoverUrl) {
+			cover.style.backgroundImage = `url("${initialCoverUrl}")`;
+		}
+	}
 	coverInput?.addEventListener('change', () => {
 		const file = coverInput.files?.[0];
 		if (!file) return;
 		const reader = new FileReader();
-		reader.addEventListener('load', () => { cover.style.backgroundImage = `url("${reader.result}")`; });
+		reader.addEventListener('load', () => { if (cover) cover.style.backgroundImage = `url("${reader.result}")`; });
 		reader.readAsDataURL(file);
 	});
 }
@@ -108,4 +204,111 @@ document.querySelectorAll('[data-gallery]').forEach((gallery) => {
 	thumbs.forEach((thumb, index) => thumb.addEventListener('click', () => showImage(index)));
 	gallery.querySelector('[data-gallery-prev]')?.addEventListener('click', () => showImage(current - 1));
 	gallery.querySelector('[data-gallery-next]')?.addEventListener('click', () => showImage(current + 1));
+});
+
+document.querySelectorAll('.password-toggle').forEach(button => {
+    button.addEventListener('click', () => {
+        const input = button.parentElement.querySelector('input');
+
+        const visible = input.type === 'text';
+
+        input.type = visible ? 'password' : 'text';
+
+        button.setAttribute(
+            'aria-label',
+            visible ? 'Mostrar contraseña' : 'Ocultar contraseña'
+        );
+
+        button.innerHTML = visible
+            ? `
+                <svg class="eye-icon" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="1.8"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6S2 12 2 12z" />
+                    <circle cx="12" cy="12" r="2.5" />
+                </svg>
+            `
+            : `
+                <svg class="eye-icon" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="1.8"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M3 3l18 18" />
+                    <path d="M10.6 5.1A10.8 10.8 0 0 1 12 5c6.5 0 10 7 10 7a18.3 18.3 0 0 1-3.2 4.1" />
+                    <path d="M6.2 6.2C3.5 8.3 2 12 2 12s3.5 7 10 7c1.5 0 2.8-.3 4-.8" />
+                    <path d="M9.9 9.9a3 3 0 0 0 4.2 4.2" />
+                </svg>
+            `;
+    });
+});
+
+document.querySelectorAll('.stat-counter').forEach(counter => {
+    const target = Number(counter.dataset.target);
+
+    if (!target) {
+        counter.textContent = '0';
+        return;
+    }
+
+    const duration = 1200;
+    const start = performance.now();
+
+    const animate = (currentTime) => {
+        const progress = Math.min(
+            (currentTime - start) / duration,
+            1
+        );
+
+        const easedProgress = 1 - Math.pow(1 - progress, 3);
+        const current = Math.floor(target * easedProgress);
+
+        counter.textContent = current.toLocaleString('es-AR');
+
+        if (progress < 1) {
+            requestAnimationFrame(animate);
+        } else {
+            counter.textContent = target.toLocaleString('es-AR');
+        }
+    };
+
+    requestAnimationFrame(animate);
+});
+document.querySelectorAll('.flash-success, .flash-error').forEach(toast => {
+    let timeout;
+    let remaining = 5000;
+    let startedAt;
+
+    const hideToast = () => {
+        toast.classList.add('is-hiding');
+
+        setTimeout(() => {
+            toast.remove();
+        }, 350);
+    };
+
+    const startTimer = () => {
+        startedAt = Date.now();
+
+        timeout = setTimeout(() => {
+            hideToast();
+        }, remaining);
+    };
+
+    const pauseTimer = () => {
+        clearTimeout(timeout);
+
+        remaining -= Date.now() - startedAt;
+    };
+
+    toast.addEventListener('mouseenter', pauseTimer);
+
+    toast.addEventListener('mouseleave', () => {
+        startTimer();
+    });
+
+    toast.querySelector('.flash-close')?.addEventListener('click', () => {
+        clearTimeout(timeout);
+        hideToast();
+    });
+
+    startTimer();
 });

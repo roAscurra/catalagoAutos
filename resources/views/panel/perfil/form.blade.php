@@ -209,49 +209,70 @@
                 y legibilidad en cualquier pantalla.
             </p>
 
-            <label>
-                Plantilla
+            <div class="form-grid compact-grid">
+                <label>
+                    Plantilla
 
-                <select
-                    data-preview="template"
-                    name="plantilla"
-                >
+                    <select
+                        data-preview="template"
+                        name="plantilla"
+                    >
 
-                    <option
-                        value="editorial"
-                        @selected(
-                            old('plantilla', $perfil->plantilla) === 'editorial' ||
-                            !in_array(
-                                old('plantilla', $perfil->plantilla),
-                                ['editorial', 'alto-contraste', 'calma'],
-                                true
+                        <option
+                            value="editorial"
+                            @selected(
+                                old('plantilla', $perfil->plantilla) === 'editorial' ||
+                                !in_array(
+                                    old('plantilla', $perfil->plantilla),
+                                    ['editorial', 'alto-contraste', 'calma'],
+                                    true
+                                )
                             )
-                        )
+                        >
+                            Editorial
+                        </option>
+
+                        <option
+                            value="alto-contraste"
+                            @selected(
+                                old('plantilla', $perfil->plantilla) === 'alto-contraste'
+                            )
+                        >
+                            Alto contraste
+                        </option>
+
+                        <option
+                            value="calma"
+                            @selected(
+                                old('plantilla', $perfil->plantilla) === 'calma'
+                            )
+                        >
+                            Calma
+                        </option>
+
+                    </select>
+
+                </label>
+
+                <label>
+                    Estilo del hero
+
+                    <select
+                        data-preview="heroStyle"
+                        name="hero_estilo"
                     >
-                        Editorial
-                    </option>
-
-                    <option
-                        value="alto-contraste"
-                        @selected(
-                            old('plantilla', $perfil->plantilla) === 'alto-contraste'
-                        )
-                    >
-                        Alto contraste
-                    </option>
-
-                    <option
-                        value="calma"
-                        @selected(
-                            old('plantilla', $perfil->plantilla) === 'calma'
-                        )
-                    >
-                        Calma
-                    </option>
-
-                </select>
-
-            </label>
+                        <option value="showcase" @selected(old('hero_estilo', $perfil->hero_estilo) === 'showcase')>
+                            Showcase
+                        </option>
+                        <option value="spotlight" @selected(old('hero_estilo', $perfil->hero_estilo) === 'spotlight')>
+                            Spotlight
+                        </option>
+                        <option value="gallery" @selected(old('hero_estilo', $perfil->hero_estilo) === 'gallery')>
+                            Gallery
+                        </option>
+                    </select>
+                </label>
+            </div>
 
             <div class="color-pair">
 

@@ -1,30 +1,43 @@
 @extends('auth.layout')
 
-@section('content')
+@php
+    $authWidth = 'auth-card-register';
+@endphp
 
-    <p class="eyebrow">Comenzá a vender</p>
+@section('content') <p class="eyebrow">Comenzá a vender</p>
 
-    <h1>
-        Tu negocio<br>
-        <em>tiene un lugar.</em>
-    </h1>
+<h1>
+    Tu negocio<br>
+    <em>tiene un lugar.</em>
+</h1>
 
-    <p class="auth-intro">
-        Creá tu página personalizada y publicá tu inventario en Rodante.
-    </p>
+<p class="auth-intro">
+    Creá tu página personalizada y publicá tu inventario en Rodante.
+</p>
 
+<form class="auth-form" method="POST" action="{{ route('register.store') }}">
 
-    <form class="auth-form" method="POST" action="{{ route('register.store') }}">
+    @csrf
 
-        @csrf
+    <div class="form-grid form-grid-register">
 
+        {{-- TIPO DE CUENTA --}}
         <label>
             Tipo de cuenta
+
             <select name="rol" class="{{ $errors->has('rol') ? 'input-error' : '' }}" required>
-                <option value="agencia" @selected(old('rol', 'individual') === 'agencia')>Agencia / concesionaria</option>
-                <option value="individual" @selected(old('rol') === 'individual')>Vendedor individual</option>
+                <option value="agencia" @selected(old('rol', 'individual') === 'agencia')>
+                    Agencia / concesionaria
+                </option>
+
+                <option value="individual" @selected(old('rol') === 'individual')>
+                    Vendedor individual
+                </option>
             </select>
-            @error('rol')<small class="form-error">{{ $message }}</small>@enderror
+
+            @error('rol')
+                <small class="form-error">{{ $message }}</small>
+            @enderror
         </label>
 
 
@@ -40,9 +53,7 @@
             >
 
             @error('name')
-                <small class="form-error">
-                    {{ $message }}
-                </small>
+                <small class="form-error">{{ $message }}</small>
             @enderror
         </label>
 
@@ -60,9 +71,7 @@
             >
 
             @error('email')
-                <small class="form-error">
-                    {{ $message }}
-                </small>
+                <small class="form-error">{{ $message }}</small>
             @enderror
         </label>
 
@@ -79,9 +88,7 @@
             >
 
             @error('nombre_negocio')
-                <small class="form-error">
-                    {{ $message }}
-                </small>
+                <small class="form-error">{{ $message }}</small>
             @enderror
         </label>
 
@@ -100,9 +107,7 @@
             <small>Solo es pública para cuentas de agencia.</small>
 
             @error('slug')
-                <small class="form-error">
-                    {{ $message }}
-                </small>
+                <small class="form-error">{{ $message }}</small>
             @enderror
         </label>
 
@@ -111,42 +116,33 @@
         <label>
             Plan inicial
 
-            <select
-                name="plan_id"
-                class="{{ $errors->has('plan_id') ? 'input-error' : '' }}"
-            >
+            <select name="plan_id" class="{{ $errors->has('plan_id') ? 'input-error' : '' }}">
                 <option value="">
                     Elegir más adelante
                 </option>
 
-                @foreach($plans as $plan)
-
-                    <option
-                        value="{{ $plan->id }}"
-                        @selected(old('plan_id') == $plan->id)
-                    >
+                @foreach ($plans as $plan)
+                    <option value="{{ $plan->id }}" @selected(old('plan_id') == $plan->id)>
                         {{ $plan->name }}
                         · ${{ number_format($plan->monthly_price, 0, ',', '.') }}/mes
                     </option>
-
                 @endforeach
-
             </select>
 
             @error('plan_id')
-                <small class="form-error">
-                    {{ $message }}
-                </small>
+                <small class="form-error">{{ $message }}</small>
             @enderror
         </label>
 
+    </div>
 
-        {{-- CONTRASEÑAS --}}
-        <div class="form-grid">
+    {{-- CONTRASEÑAS --}}
+    <div class="form-grid">
 
-            <label>
-                Contraseña
+        <label>
+            Contraseña
 
+            <div class="password-field">
                 <input
                     type="password"
                     name="password"
@@ -154,17 +150,25 @@
                     required
                 >
 
-                @error('password')
-                    <small class="form-error">
-                        {{ $message }}
-                    </small>
-                @enderror
-            </label>
+                <button type="button" class="password-toggle" aria-label="Mostrar contraseña">
+                    <svg class="eye-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6S2 12 2 12z" />
+                        <circle cx="12" cy="12" r="2.5" />
+                    </svg>
+                </button>
+            </div>
+
+            @error('password')
+                <small class="form-error">{{ $message }}</small>
+            @enderror
+        </label>
 
 
-            <label>
-                Repetir contraseña
+        <label>
+            Repetir contraseña
 
+            <div class="password-field">
                 <input
                     type="password"
                     name="password_confirmation"
@@ -172,30 +176,34 @@
                     required
                 >
 
-                @error('password_confirmation')
-                    <small class="form-error">
-                        {{ $message }}
-                    </small>
-                @enderror
-            </label>
+                <button type="button" class="password-toggle" aria-label="Mostrar contraseña">
+                    <svg class="eye-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6S2 12 2 12z" />
+                        <circle cx="12" cy="12" r="2.5" />
+                    </svg>
+                </button>
+            </div>
 
-        </div>
+            @error('password_confirmation')
+                <small class="form-error">{{ $message }}</small>
+            @enderror
+        </label>
+
+    </div>
+
+    <button class="button button-orange" type="submit">
+        Crear mi cuenta
+        <span>↗</span>
+    </button>
+
+</form>
 
 
-        <button
-            class="button button-orange"
-            type="submit"
-        >
-            Crear mi cuenta
-            <span>↗</span>
-        </button>
+<p class="auth-footer">
+    ¿Ya tenés cuenta?
+    <a href="{{ route('login') }}">Ingresá</a>
+</p>
 
-    </form>
-
-
-    <p class="auth-footer">
-        ¿Ya tenés cuenta?
-        <a href="{{ route('login') }}">Ingresá</a>
-    </p>
 
 @endsection

@@ -9,8 +9,9 @@ use App\Models\Plan;
 use App\Models\User;
 use App\Models\Vehiculo;
 use Illuminate\Http\Request;
-use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
+use Illuminate\Validation\Rule;
 
 class AdminController extends Controller
 {
@@ -133,10 +134,41 @@ class AdminController extends Controller
             'perfiles' => ['user_id' => 'required|exists:users,id', 'plan_id' => 'nullable|exists:plans,id', 'slug' => ['required', 'string', 'max:100', $unique('perfil')], 'nombre_negocio' => 'required|string|max:255', 'telefono' => 'nullable|string|max:30', 'direccion' => 'nullable|string|max:255', 'descripcion' => 'nullable|string', 'color_principal' => 'required|string|size:7'],
             'marcas' => ['nombre' => 'required|string|max:100', 'slug' => ['required', 'string', 'max:100', $unique('marcas')]],
             'modelos' => ['marca_id' => 'required|exists:marcas,id', 'nombre' => 'required|string|max:100', 'slug' => 'required|string|max:100'],
-            'vehiculos' => ['perfil_id' => 'required|exists:perfil,id', 'tipo' => 'required|string|max:50', 'marca_id' => 'required|exists:marcas,id', 'modelo_id' => 'required|exists:modelos,id', 'anio' => 'nullable|integer|min:1900|max:2100', 'kilometros' => 'nullable|integer|min:0', 'precio' => 'nullable|numeric|min:0', 'moneda' => 'required|string|size:3', 'ubicacion' => 'nullable|string|max:150', 'imagenes' => 'nullable|array|max:12', 'imagenes.*' => 'image|mimes:jpg,jpeg,png,webp|max:5120', 'descripcion' => 'nullable|string', 'publicado' => 'boolean'],
+            'vehiculos' => [
+                'perfil_id' => ['required', 'exists:perfil,id'],
+                'tipo' => ['required', 'string', 'max:50'],
+                'marca_id' => ['required', 'exists:marcas,id'],
+                'modelo_id' => [
+                    'required',
+                    'exists:modelos,id',
+                    Rule::exists('modelos', 'id')->where(fn ($query) => $query->where('marca_id', $request->input('marca_id'))),
+                ],
+                'anio' => ['nullable', 'integer', 'min:1900', 'max:2100'],
+                'kilometros' => ['nullable', 'integer', 'min:0'],
+                'precio' => ['nullable', 'numeric', 'min:0'],
+                'moneda' => ['required', 'string', 'size:3'],
+                'ubicacion' => ['nullable', 'string', 'max:150'],
+                'imagenes' => ['nullable', 'array', 'max:12'],
+                'imagenes.*' => ['image', 'mimes:jpg,jpeg,png,webp', 'max:5120'],
+                'descripcion' => ['nullable', 'string'],
+                'publicado' => ['boolean'],
+            ],
         };
 
-        return $request->validate($rules);
+        $validated = $request->validate($rules);
+
+        if ($resource === 'vehiculos' && $request->filled('modelo_id') && $request->filled('marca_id')) {
+            $belongsToBrand = Modelo::where('id', $request->input('modelo_id'))
+                ->where('marca_id', $request->input('marca_id'))
+                ->exists();
+
+            if (!$belongsToBrand) {
+                $request->merge(['modelo_id' => null]);
+                $request->validate(['modelo_id' => ['required', 'exists:modelos,id', Rule::exists('modelos', 'id')->where(fn ($query) => $query->where('marca_id', $request->input('marca_id')))] ]);
+            }
+        }
+
+        return $validated;
     }
 
     private function ensureResource(string $resource): void
